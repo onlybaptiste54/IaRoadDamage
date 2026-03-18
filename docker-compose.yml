@@ -1,0 +1,16 @@
+services:
+  yolo-trainer:
+    build: .
+    container_name: aetheria_yolo_road
+    volumes:
+      - .:/usr/src/app
+    environment:
+      - PYTHONUNBUFFERED=1  # LA LIGNE MAGIQUE POUR LES LOGS EN TEMPS RÉEL
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    ipc: host
