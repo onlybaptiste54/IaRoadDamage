@@ -31,7 +31,7 @@ def train():
         pretrained=True,
         seed=42,
         project='Aetheria_RDD',
-        name='v11_m_rdd_v2_100ep', # ✅ Nouveau nom pour ne pas mélanger les logs
+        name='v11_m_rdd_v2_100eprobot', # ✅ Nouveau nom pour ne pas mélanger les logs
         
         # --- AUGMENTATION ---
         mosaic=1.0,

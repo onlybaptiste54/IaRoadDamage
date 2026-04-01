@@ -14,3 +14,6 @@ services:
               count: 1
               capabilities: [gpu]
     ipc: host
+    command: tail -f /dev/null  # ← Garde le container ouvert SANS lancer train.py
+    stdin_open: true
+    tty: true
