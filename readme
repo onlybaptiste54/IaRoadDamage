@@ -1,0 +1,30 @@
+ramètres d'entraînement (inchangés)
+Modèle : YOLOv11 Medium (yolo11m.pt), pré-entraîné.
+Dataset : RDD_SPLIT/data.yaml.
+Époques : 100 (complètes, pas d'arrêt précoce).
+Batch size : 8.
+Image size : 512x512.
+Optimiseur : AdamW.
+Device : GPU (0).
+Patience : 20 (mais pas déclenchée, entraînement complet).
+Performances finales (Époque 100)
+Précision (Precision) : 67.56% (amélioration de +2.5% par rapport à l'époque 49).
+Rappel (Recall) : 59.12% (amélioration de +1.3%).
+mAP@0.5 : 63.94% (amélioration de +1.8%).
+mAP@0.5:0.95 : 34.47% (amélioration de +1%).
+Pertes de validation : Box loss=1.653, Cls loss=1.501, DFL loss=1.387 (légère augmentation des pertes en fin d'entraînement, indiquant une possible saturation).
+Évolution des métriques sur 100 époques
+Précision/Recall : Démarrage à ~33%/14% (époque 1), pic à 67.6%/59.1% (époque 100). Amélioration continue mais ralentie après 50 époques.
+mAP : De 11.9% à 63.9% (mAP@0.5), avec une croissance quasi-linéaire jusqu'à 80 époques, puis plateau.
+Pertes : Diminution rapide initiale (train loss de 2.15 à ~1.3), validation stable autour de 1.6-1.65. Pas d'overfitting majeur, mais les pertes remontent légèrement vers la fin (signe de fin d'apprentissage).
+Temps total : ~12.5 heures (moyenne ~7.5 min/époque).
+Analyse globale
+Points forts : Le modèle a bien appris, avec des métriques solides pour la détection de dommages routiers (fissures, nids-de-poule). L'entraînement complet a permis une amélioration supplémentaire par rapport à un arrêt précoce.
+Points faibles : mAP@0.5:0.95 reste modeste (~34%), indiquant des difficultés avec des seuils IoU stricts. Précision et rappel équilibrés, mais le rappel pourrait être boosté pour détecter plus d'objets.
+Comparaison avec v11_m_rdd_final9 : Ce modèle (100 ép.) surpasse légèrement le précédent (20 ép.) : mAP50 63.9% vs 59.6%, mAP50-95 34.5% vs 31.5%. Les 100 époques valent le coup pour +4-5% de performance.
+Recommandations :
+Tester sur le test set pour confirmer.
+Augmenter la taille d'image (640 ou 1024) ou utiliser data augmentation pour améliorer mAP@0.5:0.95.
+Si overfitting, ajouter dropout ou réduire epochs.
+Utiliser weights/best.pt pour inférence.
+Les visualisations (matrices de confusion, courbes PR/F1) sont disponibles dans le dossier pour une analyse détaillée. Si tu veux comparer avec d'autres runs o

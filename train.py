@@ -23,9 +23,9 @@ def train():
     # --- ÉTAPE 1 : ENTRAÎNEMENT ---
     results = model.train(
         data=yaml_path,
-        epochs=100,             # ✅ Passage à 100 pour convergence totale
-        imgsz=512,              # ✅ Augmentation à 640 pour le mAP@50-95 (précision des boîtes)
-        batch=8,               # ✅ On monte à 16 pour stabiliser les gradients (VRAM ~6.5GB)
+        epochs=100,             
+        imgsz=512,              
+        batch=8,               
         device=device,
         amp=True,
         pretrained=True,
@@ -46,11 +46,11 @@ def train():
 
         # --- OPTIMISATION ---
         optimizer='AdamW',
-        lr0=0.0001,
+        lr0=0.001,
         lrf=0.01,
         warmup_epochs=5,
-        weight_decay=0.01,      # ✅ Augmenté légèrement pour prévenir l'overfitting sur 100 epochs
-        patience=20,            # ✅ Arrêt auto si ça stagne pendant 20 epochs
+        weight_decay=0.01,      
+        patience=20,            
 
         # --- PERFORMANCE ---
         cache=False,            # ← Désactivé pour éviter problèmes torch/dynamo
