@@ -1,0 +1,3 @@
+[LOG] Console tee active -> /usr/src/app/logs/train_20260407_164716.log
+Hardware OK : GPU détecté (NVIDIA GeForce RTX 2080 SUPER)
+[K[34m[1mtrain: [0mScanning /usr/src/app/RDD_SPLIT/train/labels.cache... 27467 images, 8097 backgrounds, 0 corrupt: 100% ━━━━━━━━━━━━ 27467/27467 8.2Git/s 0.0s

@@ -117,7 +117,7 @@ def train():
         # --- PERFORMANCE ---
         cache=False,            
         workers=4,
-        ysvwi8dFYxGzC2fMiNpkWeMVtGsESK76fUAus96bdRfczinYpy 
+         
     )
 
     # --- ÉTAPE 2 : ÉVALUATION FINALE SUR TEST SET ---

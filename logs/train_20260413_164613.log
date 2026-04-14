@@ -1,0 +1,3 @@
+[LOG] Console tee active -> /usr/src/app/logs/train_20260413_164613.log
+Hardware OK : GPU détecté (NVIDIA GeForce RTX 2080 SUPER)
+Chargement des poids : /usr/src/app/runs/detect/Aetheria_RDD/v11_m_rdd_v2_100eRomain3/weights/best.pt
