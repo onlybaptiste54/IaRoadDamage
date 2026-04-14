@@ -1,3 +1,14 @@
-RDD_SPLIT/
-*.pt
+﻿RDD_SPLIT/
 runs/
+logs/
+*.pt
+*.zip
+*.rar
+*.tar.gz
+venv/
+.venv/
+env/
+__pycache__/
+.git/
+robottest/
+train/

@@ -70,45 +70,53 @@ def train():
         device = 'cpu'
         print("ALERTE : CPU uniquement.")
 
-    model = YOLO('yolo11m.pt')
+    # ✅ 1. CHEMIN DOCKER DES POIDS (Traduit depuis le chemin Windows)
+    weights_path = "/usr/src/app/runs/detect/Aetheria_RDD/v11_m_rdd_v2_100eRomain3/weights/best.pt"
 
-    # --- ÉTAPE 1 : ENTRAÎNEMENT ---
+    if not os.path.exists(weights_path):
+        raise FileNotFoundError(f"ÉCHEC CRITIQUE : Poids introuvables à {weights_path}")
+
+    # ✅ 2. CHARGEMENT DU MODÈLE PRÉ-ENTRAÎNÉ
+    print(f"Chargement des poids : {weights_path}")
+    model = YOLO(weights_path)
+
+    # --- ÉTAPE 1 : ENTRAÎNEMENT (FINE-TUNING) ---
     results = model.train(
         data=yaml_path,
         epochs=100,             
         imgsz=640,
-        rect=False, # Force le padding pour faire un carré parfait de 640x640    
-        batch=12,               
+        rect=False, 
+        batch=16,              # Auto batch size pour optimiser l'utilisation de la VRAM
         device=device,
         amp=True,
-        pretrained=True,
-        seed=42,
         project='Aetheria_RDD',
-        name='v11_m_rdd_v2_100eRomain', # ✅ Nouveau nom pour ne pas mélanger les logs
+        name='v11_m_rdd_v3_finetuneludni', # Nouveau nom de dossier pour tracer cette V3
         
         # --- AUGMENTATION ---
-        mosaic=0.0,
+        mosaic=0.3,
         mixup=0.0,
         flipud=0.0,
-        hsv_h=0.005, # Très faible : gère juste les erreurs de balance des blancs
-        hsv_s=0.1,   # Modéré : simule l'aspect sec vs aspect mouillé
+        hsv_h=0.005, 
+        hsv_s=0.1,   
         hsv_v=0.1,
         degrees=5.0,
         translate=0.1,
         scale=0.1,
         erasing=0.1,
-        close_mosaic=0, # Désactivé pour éviter les artefacts sur les petites classes
-
-        # --- OPTIMISATION ---
+        dropout=0.1,
+        cos_lr=True,     
+        freeze=10,
+        # --- OPTIMISATION (Ajustée pour le Fine-Tuning) ---
         optimizer='AdamW',
-lr0=0.0001,             # ← Ajusté selon votre message précédent        lrf=0.01,
-        warmup_epochs=5,
+        lr0=0.0005,             # BAISSE STRATÉGIQUE : On divise par 5 pour affiner sans casser les poids actuels
+        lrf=0.01,
+        warmup_epochs=3,        # Baisse du warmup car le modèle n'est plus vierge
         weight_decay=0.01,      
-        patience=20,            
+        patience=30,            
 
         # --- PERFORMANCE ---
-        cache=False,            # ← Désactivé pour éviter problèmes torch/dynamo
-        workers=8,
+        cache=False,            
+        workers=4,
     )
 
     # --- ÉTAPE 2 : ÉVALUATION FINALE SUR TEST SET ---
@@ -116,27 +124,26 @@ lr0=0.0001,             # ← Ajusté selon votre message précédent        lrf
     print("🧪 DÉBUT ÉVALUATION SUR TEST SET")
     print("="*70)
     
-    # ✅ Récupérer le chemin du meilleur modèle dynamiquement
-# ✅ Récupérer le chemin du meilleur modèle dynamiquement
-final_weights = os.path.join(results.save_dir, 'weights', 'best.pt')    
+    # ✅ Récupérer le chemin du NOUVEAU meilleur modèle (V3)
+    final_weights = os.path.join(results.save_dir, 'weights', 'best.pt')    
+    
     if not os.path.exists(final_weights):
         print(f"❌ ERREUR: Modèle non trouvé à {final_weights}")
         return
         
     try:
-        best_model = YOLO(final_weights) # Chargement du dernier poids
+        best_model = YOLO(final_weights) # Chargement du nouveau poids
         
         # Lancer l'évaluation
-   # Lancer l'évaluation
         print(f"⏳ Évaluation en cours sur {yaml_path}...")
         test_results = best_model.val(
             data=yaml_path,
             split='test',
             plots=True,           
             save_json=True,       
-            imgsz=640,            # CORRECTION : Doit correspondre à l'entraînement
-            batch=12,  
-            rect=False,           # ← AJOUT : Stricte parité avec l'entraînement           # CORRECTION : Sécurisation de la VRAM
+            imgsz=640,            
+            batch=8,              # Sécurisation VRAM pour la fin du script
+            rect=False,           
             device=device
         )
         
